@@ -8,30 +8,18 @@
 #include <filesystem>
 #include <vector>
 namespace fs = std::filesystem;
+#ifdef FILEDLL_EXPORTS
+#define FILEDLL_API __declspec(dllexport)
+#else
+#define FILEDLL_API __declspec(dllimport)
+#endif
+namespace FileDLL {
 
-
-class CMD {
-private:
-    fs::path currentPath = fs::current_path();
-    std::vector<fs::path> filesVector;
-    std::string exiftool = "exiftool -overwrite_original";
-    std::string format = "-d \"%Y-%m-%d_%H-%M-%S_EXIF.%%e\"";
-    std::string fileNameAssignment = "\"-FileName<${DateTimeOriginal}\"";
-    std::string fileExtension = "*.jpg";// *.mp4
-public:
-    CMD();
-    std::string getExiftool() const { return exiftool; }
-    std::string getFormat() const { return format; }
-    std::string getFileNameAssignment() const { return fileNameAssignment; }
-    std::string getFileExtension() const { return fileExtension; }
-    int rename(std::string extension);
-    void readCurrentDirFiles();
-    void writeToExif(std::string filename, std::string nums, std::string extension);
-    std::vector<std::string> extractPureNumbers();
-    std::string getShortPath(const std::string& longPath);
-    std::string utf8ToAnsi(const std::string& utf8Str);
-    std::wstring utf8ToWide(const std::string& utf8Str);
-
-};
+    FILEDLL_API void readCurrentDirFiles(std::vector<fs::path>& file_vector);
+    FILEDLL_API std::vector<std::string> extractPureNumbers(const std::vector<fs::path>& file_vector);
+    FILEDLL_API std::string getShortPath(const std::string& longPath);
+    FILEDLL_API std::string utf8ToAnsi(const std::string& utf8Str);
+    FILEDLL_API std::wstring utf8ToWide(const std::string& utf8Str);
+}
 
 #endif // !FILEDLL_H
